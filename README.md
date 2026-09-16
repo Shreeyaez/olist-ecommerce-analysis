@@ -273,52 +273,96 @@ These records will be considered when performing joins and calculating order-lev
 
 # Planned Analysis
 
-## Phase 5 — Sales Analysis 🔜
+## Phase 5 — Sales Analysis ✅
 
-Planned analysis includes:
+Completed analysis includes:
 
 - Total revenue
 - Total orders
 - Average order value
 - Monthly revenue trends
-- Monthly order trends
-- Revenue growth
+- Annual revenue trends
+- Order status analysis
 - Payment method analysis
-- Installment behavior
-- Sales seasonality
+- Revenue by product category
+- Revenue by customer state and city
+- Freight cost analysis
+- Order status distribution
+
+### Key Findings
+
+- Total product revenue: **R$13.59M**
+- Total freight revenue: **R$2.25M**
+- Total order value: **R$15.84M**
+- Average order value: **R$160.58**
+- 2018 generated the highest annual revenue at approximately **R$8.64M**
+- Credit card payments represented approximately **75% of orders**
+- São Paulo generated the highest state-level revenue at approximately **R$5.92M**
+- Freight represented approximately **14.21% of product revenue**
 
 ---
 
-## Phase 6 — Customer Analysis 🔜
+## Phase 6 — Customer Analysis ✅
 
-Planned analysis includes:
+Completed analysis includes:
 
 - Unique customers
 - Repeat customers
 - Customer purchase frequency
+- Customer spending
 - Customer lifetime value
-- Recency, Frequency, Monetary (RFM) analysis
-- Customer segmentation
+- Customer geographic distribution
 - Cohort analysis
 - Customer retention
+- One-time vs repeat customer behavior
+
+### Key Findings
+
+- **96,096 unique customers** were identified.
+- **93,099 customers (96.88%)** made only one purchase.
+- **2,997 customers (3.12%)** were repeat customers.
+- Average orders per customer: **1.03**
+- Maximum observed orders for a customer: **17**
+- Average customer spending: approximately **R$166.04**
+- Median customer spending: approximately **R$107.94**
+- Repeat customers had substantially higher average spending than one-time customers.
+- Customer spending is right-skewed, with a relatively small number of high-value customers.
+- Cohort analysis was used to examine customer retention over time.
 
 ---
 
-## Phase 7 — Product Analysis 🔜
+## Phase 7 — Product Analysis ✅
 
-Planned analysis includes:
+Completed analysis includes:
 
+- Product catalog analysis
 - Top-selling products
 - Revenue by product
 - Revenue by category
 - Product category performance
 - Average product price
 - Freight costs
-- Product characteristics and sales relationships
+- Product weight and dimensions
+- Revenue concentration
+- High-volume/low-price products
+- Low-volume/high-price products
+
+### Key Findings
+
+- The catalog contains **32,951 products**.
+- There are **73 named product categories**.
+- All **32,951 products (100%)** have at least one recorded sale.
+- `beleza_saude` generated the highest category product revenue at approximately **R$1.26M**.
+- `relogios_presentes` generated approximately **R$1.21M**.
+- `cama_mesa_banho` recorded **11,115 items sold**, making it one of the highest-volume categories.
+- Product revenue is distributed across many products rather than being dominated by a small number of individual products.
+- The top 50 products accounted for approximately **9.26%** of total product revenue.
+- Product weight and dimensions were analyzed in relation to sales and freight costs.
+- High-volume/low-price and low-volume/high-price products were identified for further business analysis.
 
 ---
 
-## Phase 8 — Seller Analysis 🔜
+## Phase 8 — Seller Analysis 🔄
 
 Planned analysis includes:
 
@@ -326,8 +370,11 @@ Planned analysis includes:
 - Revenue by seller
 - Order volume by seller
 - Seller geographic distribution
-- Delivery performance by seller
-- Seller review performance
+- Seller revenue concentration
+- Seller freight analysis
+- High-volume sellers
+- High-value sellers
+- Seller activity coverage
 
 ---
 
@@ -338,7 +385,8 @@ Planned analysis includes:
 - Delivery time
 - Estimated vs actual delivery
 - Late deliveries
-- Delivery performance by seller/category
+- Delivery performance by seller
+- Delivery performance by category
 - Review score distribution
 - Customer satisfaction
 - Relationship between delivery performance and review scores
@@ -363,8 +411,6 @@ notebooks/01_data_exploration.ipynb
 notebooks/02_customer_analysis.ipynb
 notebooks/03_eda_visualizations.ipynb
 ```
-
----
 
 ## Phase 11 — Power BI Dashboard 🔜
 
@@ -428,12 +474,12 @@ Completed:
 - [x] Data loading
 - [x] Data validation
 - [x] Data-quality investigation
+- [x]Sales analysis
+- [x]Customer analysis
+- [x]Product analysis
 
 Next:
 
-- [ ] Sales analysis
-- [ ] Customer analysis
-- [ ] Product analysis
 - [ ] Seller analysis
 - [ ] Delivery & review analysis
 - [ ] Python EDA
