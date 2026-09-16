@@ -362,84 +362,142 @@ Completed analysis includes:
 
 ---
 
-## Phase 8 — Seller Analysis 🔄
+## Phase 8 — Seller Analysis ✅
 
-Planned analysis includes:
+Analyzed the seller network, seller geography, sales performance, revenue concentration, units sold, pricing, freight, and seller activity coverage.
 
-- Seller sales performance
-- Revenue by seller
-- Order volume by seller
-- Seller geographic distribution
-- Seller revenue concentration
-- Seller freight analysis
-- High-volume sellers
-- High-value sellers
-- Seller activity coverage
+### Key Findings
+
+- **3,095 sellers**
+- Sellers were distributed across **611 cities** and **23 states**
+- São Paulo had the largest seller presence with **1,849 sellers**
+- São Paulo city had **694 sellers**, followed by Curitiba with 124 and Rio de Janeiro with 93
+- São Paulo sellers generated approximately **R$8.75M** in product revenue
+- The highest-revenue individual seller generated approximately **R$229K**
+- The top 5 sellers represented approximately **7.61%** of product revenue
+- The top 10 sellers represented approximately **13.15%**
+- The top 20 sellers represented approximately **21.09%**
+- The top 50 sellers represented approximately **32.89%**
+- Seller performance varied substantially between high-volume sellers and high-value sellers
+- Some sellers had high item volumes but relatively low average item prices
+- Some low-volume sellers had very high average item prices
+- Freight represented a substantial share of product revenue for some sellers, particularly sellers with low-priced products
+- Seller-state analysis showed a strong concentration of seller activity and revenue in São Paulo, followed by Paraná, Minas Gerais, Rio de Janeiro, and Santa Catarina
+
+### Analytical Note
+
+Freight percentage is calculated as freight value relative to product revenue. It should **not** be interpreted as seller profitability because the dataset does not provide complete seller cost or margin information.
+
+### SQL
+
+`sql/07_seller_analysis.sql`
 
 ---
 
-## Phase 9 — Delivery & Review Analysis 🔜
+## Phase 9 — Delivery & Review Analysis 🔄
 
-Planned analysis includes:
+The next phase will connect operational performance with customer feedback.
 
-- Delivery time
-- Estimated vs actual delivery
-- Late deliveries
+### Planned Analysis
+
+- Delivery time analysis
+- Estimated vs actual delivery performance
+- Late delivery rates
+- Delivery performance by state
 - Delivery performance by seller
-- Delivery performance by category
+- Delivery performance by product category
 - Review score distribution
+- Review scores vs delivery performance
+- Review scores vs freight
+- Review scores by product category
+- Review scores by seller
+- Review trends over time
+- Identifying relationships between delivery experience and customer satisfaction
+
+### SQL
+
+`sql/08_delivery_reviews_analysis.sql`
+
+---
+
+## Phase 10 — Python Analysis
+
+Use Python and Pandas to reproduce selected SQL findings and perform additional exploratory analysis.
+
+### Planned Analysis
+
+- Data exploration
+- Statistical summaries
+- Distribution analysis
+- Customer behavior analysis
+- Revenue and order trends
+- Product/category analysis
+- Seller analysis
+- Correlation analysis
+- Visualizations using Matplotlib
+
+---
+
+## Phase 11 — Power BI Dashboard
+
+Build an interactive dashboard focused on business-facing insights.
+
+### Planned Dashboard Sections
+
+**Executive Overview**
+- Revenue
+- Orders
+- Items sold
+- Average order value
+- Customers
+- Sellers
+
+**Sales**
+- Revenue trends
+- Revenue by category
+- Revenue by state
+- Payment methods
+
+**Customers**
+- New vs repeat customers
+- Customer spending
+- Purchase frequency
+- Cohort retention
+
+**Products**
+- Category performance
+- Top products
+- Product price vs volume
+- Revenue concentration
+
+**Sellers**
+- Seller revenue
+- Seller volume
+- Seller geography
+- Seller concentration
+
+**Delivery & Reviews**
+- Delivery performance
+- Late delivery rate
+- Review scores
+- Delivery vs customer satisfaction
+
+---
+
+## Phase 12 — Final Business Report
+
+Convert the analysis into a concise business report covering:
+
+- Executive summary
+- Key findings
+- Customer behavior
+- Product performance
+- Seller performance
+- Delivery performance
 - Customer satisfaction
-- Relationship between delivery performance and review scores
-
----
-
-## Phase 10 — Python Analysis 🔜
-
-Python will be used for:
-
-- Exploratory Data Analysis
-- Data cleaning and preparation where necessary
-- Customer segmentation
-- Statistical exploration
-- Visualizations
-- Deeper analysis that complements the SQL work
-
-Planned notebooks:
-
-```text
-notebooks/01_data_exploration.ipynb
-notebooks/02_customer_analysis.ipynb
-notebooks/03_eda_visualizations.ipynb
-```
-
-## Phase 11 — Power BI Dashboard 🔜
-
-The final Power BI dashboard will transform the analytical findings into an interactive business intelligence report.
-
-Planned dashboard pages:
-
-1. **Executive Overview**
-2. **Sales & Revenue**
-3. **Customers**
-4. **Products & Sellers**
-5. **Delivery & Reviews**
-
-The dashboard will include appropriate KPIs, trends, comparisons, filters, and drill-downs.
-
----
-
-## Phase 12 — Business Insights & Recommendations 🔜
-
-The final stage will translate analytical findings into business recommendations.
-
-Potential areas include:
-
-- Improving delivery performance
-- Increasing customer retention
-- Identifying high-value customer segments
-- Improving underperforming product categories
-- Identifying strong and weak sellers
-- Understanding factors affecting customer satisfaction
+- Business opportunities
+- Data limitations
+- Recommendations supported by the analysis
 
 ---
 
