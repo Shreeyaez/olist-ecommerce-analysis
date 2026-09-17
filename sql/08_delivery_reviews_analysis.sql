@@ -10,6 +10,7 @@
 
 SELECT
     COUNT(*) AS delivered_orders,
+
     ROUND(
         AVG(
             order_delivered_customer_date::DATE
@@ -17,7 +18,9 @@ SELECT
         )::NUMERIC,
         2
     ) AS average_delivery_days
+
 FROM orders
+
 WHERE order_delivered_customer_date IS NOT NULL;
 
 
@@ -30,36 +33,49 @@ SELECT
         WHEN order_delivered_customer_date::DATE
              - order_purchase_timestamp::DATE <= 3
             THEN '0-3 days'
+
         WHEN order_delivered_customer_date::DATE
              - order_purchase_timestamp::DATE <= 7
             THEN '4-7 days'
+
         WHEN order_delivered_customer_date::DATE
              - order_purchase_timestamp::DATE <= 14
             THEN '8-14 days'
+
         WHEN order_delivered_customer_date::DATE
              - order_purchase_timestamp::DATE <= 21
             THEN '15-21 days'
+
         ELSE '22+ days'
     END AS delivery_bucket,
+
     COUNT(*) AS orders
+
 FROM orders
+
 WHERE order_delivered_customer_date IS NOT NULL
+
 GROUP BY
     CASE
         WHEN order_delivered_customer_date::DATE
              - order_purchase_timestamp::DATE <= 3
             THEN '0-3 days'
+
         WHEN order_delivered_customer_date::DATE
              - order_purchase_timestamp::DATE <= 7
             THEN '4-7 days'
+
         WHEN order_delivered_customer_date::DATE
              - order_purchase_timestamp::DATE <= 14
             THEN '8-14 days'
+
         WHEN order_delivered_customer_date::DATE
              - order_purchase_timestamp::DATE <= 21
             THEN '15-21 days'
+
         ELSE '22+ days'
     END
+
 ORDER BY
     MIN(
         order_delivered_customer_date::DATE
@@ -101,6 +117,7 @@ SELECT
     ) AS late_percentage
 
 FROM orders
+
 WHERE order_delivered_customer_date IS NOT NULL
   AND order_estimated_delivery_date IS NOT NULL;
 
@@ -130,6 +147,7 @@ SELECT
     ) AS average_late_days
 
 FROM orders
+
 WHERE order_delivered_customer_date IS NOT NULL
   AND order_estimated_delivery_date IS NOT NULL;
 
@@ -140,6 +158,7 @@ WHERE order_delivered_customer_date IS NOT NULL
 
 SELECT
     c.customer_state,
+
     COUNT(*) AS delivered_orders,
 
     ROUND(
@@ -159,6 +178,7 @@ SELECT
     ) AS late_percentage
 
 FROM orders o
+
 JOIN customers c
     ON o.customer_id = c.customer_id
 
@@ -166,16 +186,24 @@ WHERE o.order_delivered_customer_date IS NOT NULL
   AND o.order_estimated_delivery_date IS NOT NULL
 
 GROUP BY c.customer_state
+
 ORDER BY average_delivery_days DESC;
 
 
 -- ============================================================
 -- QUERY 6: Delivery Performance by Seller State
 -- ============================================================
+-- Note:
+-- This is a seller-origin perspective.
+-- An order can contain items from more than one seller,
+-- so DISTINCT order_id is used to avoid item-level
+-- duplication within each seller state.
+-- ============================================================
 
 SELECT
     s.seller_state,
-    COUNT(DISTINCT oi.order_id) AS orders,
+
+    COUNT(DISTINCT oi.order_id) AS delivered_orders,
 
     ROUND(
         AVG(
@@ -195,8 +223,10 @@ SELECT
     ) AS late_percentage
 
 FROM order_items oi
+
 JOIN sellers s
     ON oi.seller_id = s.seller_id
+
 JOIN orders o
     ON oi.order_id = o.order_id
 
@@ -204,6 +234,7 @@ WHERE o.order_delivered_customer_date IS NOT NULL
   AND o.order_estimated_delivery_date IS NOT NULL
 
 GROUP BY s.seller_state
+
 ORDER BY average_delivery_days DESC;
 
 
@@ -213,16 +244,19 @@ ORDER BY average_delivery_days DESC;
 
 SELECT
     review_score,
+
     COUNT(*) AS reviews,
 
     ROUND(
-        COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (),
+        COUNT(*) * 100.0
+        / SUM(COUNT(*)) OVER (),
         2
     ) AS review_percentage
 
 FROM order_reviews
 
 GROUP BY review_score
+
 ORDER BY review_score;
 
 
@@ -238,7 +272,9 @@ SELECT
 
     ROUND(
         PERCENTILE_CONT(0.5)
-        WITHIN GROUP (ORDER BY review_score)::NUMERIC,
+        WITHIN GROUP (
+            ORDER BY review_score
+        )::NUMERIC,
         2
     ) AS median_review_score
 
@@ -251,7 +287,10 @@ FROM order_reviews;
 
 SELECT
     r.review_score,
+
     COUNT(*) AS reviews,
+
+    COUNT(DISTINCT r.order_id) AS reviewed_orders,
 
     ROUND(
         AVG(
@@ -273,14 +312,16 @@ SELECT
     ) AS average_late_days,
 
     ROUND(
-        COUNT(*) FILTER (
+        COUNT(DISTINCT r.order_id) FILTER (
             WHERE o.order_delivered_customer_date::DATE
                   > o.order_estimated_delivery_date::DATE
-        ) * 100.0 / COUNT(*),
+        ) * 100.0
+        / COUNT(DISTINCT r.order_id),
         2
     ) AS late_percentage
 
 FROM order_reviews r
+
 JOIN orders o
     ON r.order_id = o.order_id
 
@@ -288,16 +329,21 @@ WHERE o.order_delivered_customer_date IS NOT NULL
   AND o.order_estimated_delivery_date IS NOT NULL
 
 GROUP BY r.review_score
+
 ORDER BY r.review_score;
 
 
 -- ============================================================
 -- QUERY 10: Review Score vs Freight
 -- ============================================================
+-- Freight and item price are item-level metrics.
+-- Reviewed orders are counted distinctly.
+-- ============================================================
 
 SELECT
     r.review_score,
-    COUNT(DISTINCT r.order_id) AS orders,
+
+    COUNT(DISTINCT r.order_id) AS reviewed_orders,
 
     ROUND(
         AVG(oi.freight_value)::NUMERIC,
@@ -310,10 +356,12 @@ SELECT
     ) AS average_item_price
 
 FROM order_reviews r
+
 JOIN order_items oi
     ON r.order_id = oi.order_id
 
 GROUP BY r.review_score
+
 ORDER BY r.review_score;
 
 
@@ -335,8 +383,10 @@ SELECT
     ) AS average_review_score
 
 FROM order_reviews r
+
 JOIN order_items oi
     ON r.order_id = oi.order_id
+
 JOIN products p
     ON oi.product_id = p.product_id
 
@@ -353,8 +403,12 @@ ORDER BY average_review_score DESC;
 
 SELECT
     s.seller_id,
+
     s.seller_state,
+
     COUNT(*) AS reviews,
+
+    COUNT(DISTINCT r.order_id) AS reviewed_orders,
 
     ROUND(
         AVG(r.review_score)::NUMERIC,
@@ -362,8 +416,10 @@ SELECT
     ) AS average_review_score
 
 FROM order_reviews r
+
 JOIN order_items oi
     ON r.order_id = oi.order_id
+
 JOIN sellers s
     ON oi.seller_id = s.seller_id
 
@@ -382,22 +438,25 @@ ORDER BY average_review_score DESC;
 
 SELECT
     r.review_score,
-    COUNT(*) AS reviewed_orders,
 
-    COUNT(*) FILTER (
+    COUNT(DISTINCT r.order_id) AS reviewed_orders,
+
+    COUNT(DISTINCT r.order_id) FILTER (
         WHERE o.order_delivered_customer_date::DATE
               > o.order_estimated_delivery_date::DATE
     ) AS late_orders,
 
     ROUND(
-        COUNT(*) FILTER (
+        COUNT(DISTINCT r.order_id) FILTER (
             WHERE o.order_delivered_customer_date::DATE
                   > o.order_estimated_delivery_date::DATE
-        ) * 100.0 / COUNT(*),
+        ) * 100.0
+        / COUNT(DISTINCT r.order_id),
         2
     ) AS late_percentage
 
 FROM order_reviews r
+
 JOIN orders o
     ON r.order_id = o.order_id
 
@@ -405,6 +464,7 @@ WHERE o.order_delivered_customer_date IS NOT NULL
   AND o.order_estimated_delivery_date IS NOT NULL
 
 GROUP BY r.review_score
+
 ORDER BY r.review_score;
 
 
@@ -417,19 +477,25 @@ SELECT
         WHEN o.order_delivered_customer_date::DATE
              - o.order_purchase_timestamp::DATE <= 3
             THEN '0-3 days'
+
         WHEN o.order_delivered_customer_date::DATE
              - o.order_purchase_timestamp::DATE <= 7
             THEN '4-7 days'
+
         WHEN o.order_delivered_customer_date::DATE
              - o.order_purchase_timestamp::DATE <= 14
             THEN '8-14 days'
+
         WHEN o.order_delivered_customer_date::DATE
              - o.order_purchase_timestamp::DATE <= 21
             THEN '15-21 days'
+
         ELSE '22+ days'
     END AS delivery_bucket,
 
     COUNT(*) AS reviews,
+
+    COUNT(DISTINCT r.order_id) AS reviewed_orders,
 
     ROUND(
         AVG(r.review_score)::NUMERIC,
@@ -437,6 +503,7 @@ SELECT
     ) AS average_review_score
 
 FROM order_reviews r
+
 JOIN orders o
     ON r.order_id = o.order_id
 
@@ -447,15 +514,19 @@ GROUP BY
         WHEN o.order_delivered_customer_date::DATE
              - o.order_purchase_timestamp::DATE <= 3
             THEN '0-3 days'
+
         WHEN o.order_delivered_customer_date::DATE
              - o.order_purchase_timestamp::DATE <= 7
             THEN '4-7 days'
+
         WHEN o.order_delivered_customer_date::DATE
              - o.order_purchase_timestamp::DATE <= 14
             THEN '8-14 days'
+
         WHEN o.order_delivered_customer_date::DATE
              - o.order_purchase_timestamp::DATE <= 21
             THEN '15-21 days'
+
         ELSE '22+ days'
     END
 
@@ -500,6 +571,7 @@ WHERE o.order_delivered_customer_date IS NOT NULL
   AND o.order_estimated_delivery_date IS NOT NULL
 
 GROUP BY purchase_month
+
 ORDER BY purchase_month;
 
 
@@ -515,16 +587,20 @@ SELECT
 
     COUNT(*) AS reviews,
 
+    COUNT(DISTINCT r.order_id) AS reviewed_orders,
+
     ROUND(
         AVG(r.review_score)::NUMERIC,
         2
     ) AS average_review_score
 
 FROM order_reviews r
+
 JOIN orders o
     ON r.order_id = o.order_id
 
 GROUP BY purchase_month
+
 ORDER BY purchase_month;
 
 
@@ -534,8 +610,11 @@ ORDER BY purchase_month;
 
 SELECT
     o.order_id,
+
     o.order_purchase_timestamp::DATE AS purchase_date,
+
     o.order_delivered_customer_date::DATE AS delivered_date,
+
     o.order_estimated_delivery_date::DATE AS estimated_date,
 
     o.order_delivered_customer_date::DATE
@@ -563,10 +642,13 @@ SELECT
         WHEN o.order_delivered_customer_date::DATE
              <= o.order_estimated_delivery_date::DATE
             THEN 'on_time'
+
         ELSE 'late'
     END AS delivery_status,
 
     COUNT(*) AS reviews,
+
+    COUNT(DISTINCT r.order_id) AS reviewed_orders,
 
     ROUND(
         AVG(r.review_score)::NUMERIC,
@@ -574,6 +656,7 @@ SELECT
     ) AS average_review_score
 
 FROM order_reviews r
+
 JOIN orders o
     ON r.order_id = o.order_id
 
@@ -581,6 +664,7 @@ WHERE o.order_delivered_customer_date IS NOT NULL
   AND o.order_estimated_delivery_date IS NOT NULL
 
 GROUP BY delivery_status
+
 ORDER BY delivery_status;
 
 
@@ -589,22 +673,24 @@ ORDER BY delivery_status;
 -- ============================================================
 
 SELECT
-    COUNT(*) AS low_score_late_orders,
+    COUNT(DISTINCT r.order_id) AS low_score_late_orders,
 
     ROUND(
-        COUNT(*) * 100.0 /
+        COUNT(DISTINCT r.order_id) * 100.0
+        /
         (
-            SELECT COUNT(*)
-            FROM order_reviews r
-            JOIN orders o
-                ON r.order_id = o.order_id
-            WHERE o.order_delivered_customer_date IS NOT NULL
-              AND o.order_estimated_delivery_date IS NOT NULL
+            SELECT COUNT(DISTINCT r2.order_id)
+            FROM order_reviews r2
+            JOIN orders o2
+                ON r2.order_id = o2.order_id
+            WHERE o2.order_delivered_customer_date IS NOT NULL
+              AND o2.order_estimated_delivery_date IS NOT NULL
         ),
         2
     ) AS percentage_of_reviewed_delivered_orders
 
 FROM order_reviews r
+
 JOIN orders o
     ON r.order_id = o.order_id
 
@@ -613,3 +699,49 @@ WHERE r.review_score <= 2
   AND o.order_estimated_delivery_date IS NOT NULL
   AND o.order_delivered_customer_date::DATE
       > o.order_estimated_delivery_date::DATE;
+
+
+-- ============================================================
+-- QUERY 20: Review Quality by Delivery Status
+-- ============================================================
+
+SELECT
+    CASE
+        WHEN o.order_delivered_customer_date::DATE
+             <= o.order_estimated_delivery_date::DATE
+            THEN 'on_time'
+
+        ELSE 'late'
+    END AS delivery_status,
+
+    COUNT(*) AS reviews,
+
+    COUNT(DISTINCT r.order_id) AS reviewed_orders,
+
+    ROUND(
+        AVG(r.review_score)::NUMERIC,
+        2
+    ) AS average_review_score,
+
+    COUNT(*) FILTER (
+        WHERE r.review_score <= 2
+    ) AS low_score_reviews,
+
+    ROUND(
+        COUNT(*) FILTER (
+            WHERE r.review_score <= 2
+        ) * 100.0 / COUNT(*),
+        2
+    ) AS low_score_percentage
+
+FROM order_reviews r
+
+JOIN orders o
+    ON r.order_id = o.order_id
+
+WHERE o.order_delivered_customer_date IS NOT NULL
+  AND o.order_estimated_delivery_date IS NOT NULL
+
+GROUP BY delivery_status
+
+ORDER BY delivery_status;
