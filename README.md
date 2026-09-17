@@ -396,23 +396,84 @@ Freight percentage is calculated as freight value relative to product revenue. I
 
 ## Phase 9 — Delivery & Review Analysis 🔄
 
-The next phase will connect operational performance with customer feedback.
+### Delivery Performance
 
-### Planned Analysis
+- **96,476** orders had a recorded customer delivery date.
+- Average delivery time was **12.50 days**.
+- **93.23%** of delivered orders arrived on or before the estimated delivery date.
+- **6.77%** arrived after the estimated delivery date.
+- 37,980 orders were delivered within **8–14 days**.
+- 11,630 orders took **22+ days** to deliver.
 
-- Delivery time analysis
-- Estimated vs actual delivery performance
-- Late delivery rates
-- Delivery performance by state
-- Delivery performance by seller
-- Delivery performance by product category
-- Review score distribution
-- Review scores vs delivery performance
-- Review scores vs freight
-- Review scores by product category
-- Review scores by seller
-- Review trends over time
-- Identifying relationships between delivery experience and customer satisfaction
+### Delivery by Customer State
+
+Delivery performance varied considerably by customer location.
+
+For example:
+
+- São Paulo: **8.70 days** average delivery, **4.49%** late.
+- Minas Gerais: **11.95 days**, **4.58%** late.
+- Paraná: **11.94 days**, **4.04%** late.
+- Rio de Janeiro: **15.24 days**, **12.10%** late.
+
+Some smaller states showed much higher delivery times, but their order counts were small, so these results should be interpreted cautiously.
+
+### Customer Reviews
+
+- Average review score: **4.09 / 5**.
+- Median review score: **5 / 5**.
+- **57.78%** of reviews were 5-star.
+- **11.51%** were 1-star reviews.
+
+### Delivery and Reviews
+
+A strong association was observed between delivery performance and review scores:
+
+| Review Score | Average Delivery | Late Delivery |
+|---:|---:|---:|
+| 1 | 21.25 days | 36.60% |
+| 2 | 16.61 days | 18.91% |
+| 3 | 14.20 days | 8.77% |
+| 4 | 12.25 days | 3.43% |
+| 5 | 10.63 days | 1.86% |
+
+When comparing delivery status directly:
+
+- On-time deliveries had an average review score of **4.29**.
+- Late deliveries had an average review score of **2.27**.
+
+Delivery duration also showed a similar relationship:
+
+| Delivery Time | Average Review |
+|---|---:|
+| 0–3 days | 4.46 |
+| 4–7 days | 4.40 |
+| 8–14 days | 4.30 |
+| 15–21 days | 4.12 |
+| 22+ days | 3.06 |
+
+These results show an association between longer delivery times and lower review scores. They should not be interpreted as proof that delivery delays directly cause lower reviews.
+
+### Monthly Delivery Trends
+
+Delivery performance changed substantially over time.
+
+Notable periods include:
+
+- November 2017: **15.07 days** average delivery, **12.40%** late.
+- February 2018: **16.88 days**, **14.14%** late.
+- March 2018: **16.24 days**, **18.96%** late.
+- August 2018: **7.66 days**, **6.19%** late.
+
+Review scores also declined during parts of late 2017 and early 2018, reaching an average of **3.75** in March 2018.
+
+### Extreme Delivery Delays
+
+The analysis identified several extreme delivery records, including orders with delivery times exceeding 150 days.
+
+These records should be treated as potential outliers or unusual operational events rather than removed automatically.
+
+---
 
 ### SQL
 
@@ -532,14 +593,14 @@ Completed:
 - [x] Data loading
 - [x] Data validation
 - [x] Data-quality investigation
-- [x]Sales analysis
-- [x]Customer analysis
-- [x]Product analysis
+- [x] Sales analysis
+- [x] Customer analysis
+- [x] Product analysis
+- [x] Seller analysis
+- [x] Delivery & review analysis
 
 Next:
 
-- [ ] Seller analysis
-- [ ] Delivery & review analysis
 - [ ] Python EDA
 - [ ] Power BI dashboard
 - [ ] Business recommendations
